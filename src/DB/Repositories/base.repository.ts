@@ -1,4 +1,4 @@
-import { Model, FilterQuery, ProjectionType, QueryOptions } from "mongoose"
+import mongoose, { Model, FilterQuery, ProjectionType, QueryOptions } from "mongoose"
 
 
 
@@ -13,7 +13,9 @@ export abstract class BaseRepository <T>{
         return await this.model.findOne(filters,projection, options)
     }
 
-    findDocumentById(){}
+    async findDocumentById(id:mongoose.Schema.Types.ObjectId, projection?:ProjectionType<T>, options?:QueryOptions<T>):Promise<T | null>{
+        return await this.model.findById(id, projection, options)
+    }
 
     updateOneDocument(){}
 

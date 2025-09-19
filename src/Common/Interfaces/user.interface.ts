@@ -1,5 +1,7 @@
+import { JwtPayload } from 'jsonwebtoken';
 import { GenderEnum, OtpTypesEnum, ProviderEnum, RoleEnum } from "../Enums/user.enum";
 import { Document } from "mongoose";
+import { Request } from 'express';
 
 interface IOTP {
     value: string;
@@ -36,6 +38,14 @@ interface IEmailArgument {
 }
 
 
+interface IRequest extends Request{
+    loggedInUser:{ user:IUser, token: JwtPayload}
+}
+
+interface IBlackListedToken extends Document {
+    tokenId: string, 
+    expiresAt: Date,
+}
 
 
-export type {IUser, IEmailArgument}
+export type {IUser, IEmailArgument, IRequest, IBlackListedToken}
