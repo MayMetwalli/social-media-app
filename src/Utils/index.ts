@@ -1,3 +1,6 @@
 export * from './Encryption/crypto.utils'
 export * from './Encryption/hash.utils'
 export * from './Services/email.utils'
+export * from './Errors/exceptions.utils'
+export * from './Services/s3-client.utils'
+export * from './Services/s3.service'

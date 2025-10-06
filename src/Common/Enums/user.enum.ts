@@ -17,7 +17,9 @@ enum ProviderEnum {
 
 enum OtpTypesEnum{
     CONFIRMATION = 'confirmation',
-    RESET_PASSWORD = 'reset-password'
+    RESET_PASSWORD = 'reset-password',
+    PASSWORD_RESET = "PASSWORD_RESET",
+    TWO_FACTOR = "TWO_FACTOR"
 }
 
 export {RoleEnum, GenderEnum, ProviderEnum, OtpTypesEnum}

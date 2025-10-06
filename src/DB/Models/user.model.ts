@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema<IUser>({
         enum:ProviderEnum,
         default:ProviderEnum.LOCAL,
     },
+    is2FAEnabled: { type: Boolean, default: false },
     googleId: String,
     phoneNumber: String,
     OTPS:[{

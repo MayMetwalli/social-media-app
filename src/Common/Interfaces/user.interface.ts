@@ -25,7 +25,8 @@ interface IUser extends Document{
     googleId?: string;
     phoneNumber?: string;
     isVerified?:boolean;
-    OTPS?:IOTP[]
+    OTPS?:IOTP[];
+    is2FAEnabled?: boolean;
 }
 
 

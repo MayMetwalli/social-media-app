@@ -12,6 +12,9 @@ import { BlackListedTokenRepository } from "../../../DB/Repositories";
 
 
 class AuthService{
+    resetPassword(email: any, newPassword: any) {
+        throw new Error("Method not implemented.");
+    }
 
 private userRepo : UserRepository = new UserRepository(userModel)
 private blackLsitedRepo: BlackListedTokenRepository = new BlackListedTokenRepository(BlackListedTokenModel)
@@ -123,6 +126,11 @@ private blackLsitedRepo: BlackListedTokenRepository = new BlackListedTokenReposi
         const blackListedToken = await this.blackLsitedRepo.createNewDocument({tokenId: jti, expiresAt })
          res.status(200).json({message: 'user logged out successfully', data:{blackListedToken}})
     }
+
+        profileImage = async (req: Request, res: Response, next: NextFunction) => {
+
+        return res.status(200).json({ message: 'Profile Image uploaded successfully', file: req.file });
+    };
 }
 
 
