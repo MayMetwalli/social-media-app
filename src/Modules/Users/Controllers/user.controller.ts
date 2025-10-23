@@ -68,4 +68,53 @@ router.put("/update-email", authentication, async (req: Request, res: Response) 
   }
 });
 
+router.put("/block/:userId", authentication, async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+const result = await userService.blockUser(userId!);
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put("/unblock/:userId", authentication, async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await userService.unblockUser(userId!);
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/friend-request/:requestId", authentication, async (req: Request, res: Response) => {
+  try {
+    const { requestId } = req.params;
+    if (!requestId) return res.status(400).json({ message: "Request ID is required" });
+
+    const result = await userService.deleteFriendRequest(requestId);
+    res.status(200).json({ message: "Friend request deleted", result });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/unfriend/:friendId", authentication, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?._id;
+    const { friendId } = req.params;
+
+    if (!friendId) return res.status(400).json({ message: "Friend ID is required" });
+
+    const result = await userService.unFriend(userId, friendId);
+    res.status(200).json({ message: "User unfriended", result });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 export default router;
+

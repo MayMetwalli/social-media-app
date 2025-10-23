@@ -11,3 +11,6 @@ export function profileController(arg0: string, profileController: any) {
 export function postController(arg0: string, postController: any) {
   throw new Error("Function not implemented.")
 }
+export function commentController(arg0: string, commentController: any) {
+  throw new Error("Function not implemented.")
+}

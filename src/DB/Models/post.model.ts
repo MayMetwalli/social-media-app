@@ -7,6 +7,7 @@ export interface IPost extends Document {
   likes: string[];
   createdAt: Date;
   updatedAt: Date;
+  isFrozen: boolean;
 }
 
 const postSchema = new Schema<IPost>(
@@ -15,6 +16,7 @@ const postSchema = new Schema<IPost>(
     content: { type: String, required: true },
     image: { type: String },
     likes: { type: [String], default: [] },
+     isFrozen: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

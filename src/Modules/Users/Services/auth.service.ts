@@ -131,6 +131,8 @@ private blackLsitedRepo: BlackListedTokenRepository = new BlackListedTokenReposi
 
         return res.status(200).json({ message: 'Profile Image uploaded successfully', file: req.file });
     };
+
+
 }
 
 

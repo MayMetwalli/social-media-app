@@ -2,7 +2,7 @@
 
 import nodemailer from "nodemailer"
 import { IEmailArgument } from "../../Common"
-
+import { userModel } from "../../DB/Models";
 
 export const sendEmail = async ({
     to,
@@ -25,17 +25,17 @@ export const sendEmail = async ({
     })
 
     const info = await transporter.sendMail({
-        from: 'maymetwalli.27@gmail.com',
+        from: process.env.USER_EMAIL,
         to,
         cc,
         html:content,
         subject,
         attachments
-    })
+    });
 
     console.log('info',info)
     return info 
-}
+};
 
 
 
@@ -47,4 +47,46 @@ localEmitter.on('sendEmail', (args:IEmailArgument)=>{
     console.log(args)
 
     sendEmail(args)
-})
+});
+
+localEmitter.on(
+  "mentionUsers",
+  async ({
+    content,
+    senderName,
+  }: {
+    content: string;
+    senderName: string;
+  }) => {
+    try {
+      console.log("Mention event started");
+
+      const mentions = content.match(/@(\w+)/g);
+      if (!mentions) return console.log("No mentions found");
+
+      const usernames = mentions.map((m) => m.replace("@", ""));
+    const mentionedUsers = await userModel.find({
+    firstName: { $in: usernames },
+        });
+
+
+      if (!mentionedUsers.length) return console.log("No users found for mentions");
+
+      for (const user of mentionedUsers) {
+        await sendEmail({
+          to: user.email,
+          subject: `${senderName} mentioned you`,
+          content: `${senderName} mentioned you in a post.`,
+        });
+      }
+
+      console.log(
+        `Mention emails sent to: ${mentionedUsers
+          .map((u) => u.firstName)
+          .join(", ")}`
+      );
+    } catch (error: any) {
+      console.error("Error processing mentions:", error.message);
+    }
+  }
+);

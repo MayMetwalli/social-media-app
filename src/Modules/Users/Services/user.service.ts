@@ -2,6 +2,10 @@ import bcrypt from "bcrypt";
 import { userModel } from "../../../DB/Models";
 import s3Service from "../../../Utils/Services/s3-client.utils"; 
 import { Request, Response } from "express";
+import { postModel as Post } from "../../../DB/Models/post.model";
+import { commentModel as Comment } from "../../../DB/Models/comment.model";
+import { replyModel as Reply } from "../../../DB/Models/reply.model";
+import { friendRequestModel } from "../../../DB/Models/friendRequest.model";
 
 
 class UserService {
@@ -66,6 +70,61 @@ async updateProfilePicture(userId: string, file: Express.Multer.File) {
 
     return { user, profilePictureUrl };
   }
+
+
+  async deleteUser(userId: string) {
+  await Post.deleteMany({ userId });
+
+  await Comment.deleteMany({ userId });
+
+  await Reply.deleteMany({ userId });
+
+  await userModel.findByIdAndDelete(userId);
+
+  return { message: "User and all related data deleted" };
+}
+
+  async blockUser(userId: string) {
+    const user = await userModel.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    user.isBlocked = true;
+    await user.save();
+
+    return { message: `User ${user.firstName} has been blocked.` };
+  }
+
+    async unblockUser(userId: string) {
+    const user = await userModel.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    user.isBlocked = false;
+    await user.save();
+
+    return { message: `User ${user.firstName} has been unblocked.` };
+  }
+
+  async deleteFriendRequest(requestId: string) {
+  const result = await friendRequestModel.findByIdAndDelete(requestId);
+  if (!result) throw new Error("Friend request not found");
+  return result;
+}
+
+async unFriend(userId: string, friendId: string) {
+  const user = await userModel.findById(userId);
+  const friend = await userModel.findById(friendId);
+
+  if (!user || !friend) throw new Error("User or friend not found");
+
+user.friends = (user.friends || []).filter((id: any) => id.toString() !== friendId);
+friend.friends = (friend.friends || []).filter((id: any) => id.toString() !== userId);
+
+  await user.save();
+  await friend.save();
+
+  return { message: "Unfriended successfully" };
+}
+
 }
 
 export default new UserService();

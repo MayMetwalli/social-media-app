@@ -50,7 +50,10 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         enum:ProviderEnum,
         default:ProviderEnum.LOCAL,
-    },
+    },isBlocked: {          
+    type: Boolean,
+    default: false
+  },
     is2FAEnabled: { type: Boolean, default: false },
     googleId: String,
     phoneNumber: String,
@@ -58,7 +61,13 @@ const userSchema = new mongoose.Schema<IUser>({
         value:{type: String, required:true},
         expiresAt:{type:Date, default:Date.now() + 6000000},
         otpType:{type:String, enum:OtpTypesEnum, required: true}
-    }]
+    }],
+    friends: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+  },
+],
 })
 
 

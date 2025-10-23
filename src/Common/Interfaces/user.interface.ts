@@ -27,6 +27,8 @@ interface IUser extends Document{
     isVerified?:boolean;
     OTPS?:IOTP[];
     is2FAEnabled?: boolean;
+    isBlocked?: boolean;
+    friends?: string[];
 }
 
 
