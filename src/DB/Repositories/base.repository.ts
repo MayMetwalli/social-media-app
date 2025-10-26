@@ -21,6 +21,14 @@ async findDocumentById(
   return await this.model.findById(id, projection, options);
 }
 
+async findDocuments(
+    filters: FilterQuery<T>,
+    projection?: ProjectionType<T>,
+    options?: QueryOptions<T>
+  ): Promise<T[]> {
+    return await this.model.find(filters, projection, options);
+  }
+
 
     updateOneDocument(){}
 

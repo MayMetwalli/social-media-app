@@ -3,9 +3,14 @@ import express, { NextFunction, Request, Response } from "express";
 import * as controllers from "./Modules/controllers.index";
 import { dbConnection } from "./DB/db.connection";
 import s3Client from "./Utils/Services/s3-client.utils";
+import { Server, Socket } from "socket.io";
+import cors from 'cors'
+import { ioInitialization } from "./Gateways/socketIo.gateways";
+
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 dbConnection();
@@ -37,6 +42,15 @@ app.use((err: Error | null, req: Request, res: Response, next: NextFunction) => 
 });
 
 const port: number | string = process.env.PORT || 5000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// const io = new Server(server, {cors:{origin:'*'}})
+
+// io.on('connection', (socket:Socket)=>{
+//   console.log('a user connected');
+//   console.log(socket.id)
+// })
+
+ioInitialization(server)
