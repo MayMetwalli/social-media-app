@@ -9,4 +9,6 @@ export const chatInitialization = (socket: Socket) => {
   chatEvents.getConversationMessagesEvent()
   chatEvents.getGroupHistoryEvent()
   chatEvents.sendGroupMessageEvent()
+  chatEvents.onlineStatusEvents()
+  chatEvents.typingEvents()
 };

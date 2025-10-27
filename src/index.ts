@@ -6,6 +6,10 @@ import s3Client from "./Utils/Services/s3-client.utils";
 import { Server, Socket } from "socket.io";
 import cors from 'cors'
 import { ioInitialization } from "./Gateways/socketIo.gateways";
+import { createHandler } from "graphql-http";
+import { MainSchema } from "./GraphQl/main.gql";
+import { authentication } from "./Middleware";
+import { IRequest } from "./Common";
 
 
 const app = express();
@@ -14,6 +18,8 @@ app.use(cors());
 app.use(express.json());
 
 dbConnection();
+
+app.all('/graphql', authentication, createHandler({schema: MainSchema, context: (req)=>({user: (req.raw as IRequest).loggedInUser})}))
 
 app.use("/api/auth", controllers.authController);
 app.use("/api/users", controllers.profileController);

@@ -6,6 +6,33 @@ import { getIo } from '../../../Gateways/socketIo.gateways';
 export class ChatService {
   private messageRepository = new MessageRepository();
   private conversationRepository = new ConversationRepository();
+private static onlineUsers: Map<string, string> = new Map(); 
+
+  setUserOnline(socket: Socket) {
+    ChatService.onlineUsers.set(socket.data.userId, socket.id);
+    getIo()?.emit("user-status", {
+      userId: socket.data.userId,
+      status: "online",
+    });
+  }
+
+  setUserOffline(socket: Socket) {
+    ChatService.onlineUsers.delete(socket.data.userId);
+    getIo()?.emit("user-status", {
+      userId: socket.data.userId,
+      status: "offline",
+    });
+  }
+
+  handleTyping(socket: Socket, data: any) {
+    const { conversationId, isTyping } = data;
+    getIo()
+      ?.to(conversationId)
+      .emit("user-typing", {
+        userId: socket.data.userId,
+        isTyping,
+      });
+  }
 
   async joinPrivateChat(socket: Socket, targetUserId: string) {
     let conversation = await this.conversationRepository.findOneDocument({

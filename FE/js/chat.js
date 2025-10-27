@@ -44,6 +44,48 @@ function sendMessage(sendTo, type) {
     }
 }
 
+
+//==================== TYPING INDICATOR ====================//
+
+let typingTimeout;
+const typingIndicator = document.createElement('div');
+typingIndicator.id = 'typingIndicator';
+typingIndicator.className = 'text-muted px-2';
+typingIndicator.textContent = '';
+document.getElementById('messageList').after(typingIndicator);
+
+// Detect typing in the input box
+$("#messageBody").on("input", function () {
+  const text = $(this).val().trim();
+  const currentTarget = $("#sendMessage").attr("onclick");
+  const match = currentTarget.match(/'([^']+)'/);
+  const targetId = match ? match[1] : null;
+
+  if (!targetId) return;
+
+  clientIo.emit("typing", {
+    conversationId: targetId,
+    isTyping: text.length > 0
+  });
+
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    clientIo.emit("typing", {
+      conversationId: targetId,
+      isTyping: false
+    });
+  }, 2000);
+});
+
+// Listen for others typing
+clientIo.on("user-typing", ({ userId, isTyping }) => {
+  if (userId === globalProfile._id) return; 
+
+  const friendTyping = isTyping ? "Typing..." : "";
+  typingIndicator.textContent = friendTyping;
+});
+
+
 //sendCompleted
 clientIo.on('message-sent', (data) => {
     
@@ -122,6 +164,17 @@ function getUserData() {
     });
 }
 
+clientIo.on("user-status", ({ userId, status }) => {
+  // Find the friend’s status indicator
+  const statusSpan = document.getElementById(`c_${userId}`);
+  if (statusSpan) {
+    if (status === "online") {
+      statusSpan.textContent = "🟢";
+    } else {
+      statusSpan.textContent = "🔴";
+    }
+  }
+});
 
 //=========================================== PRIVATE CHAT ====================================//
 // Show friends list
